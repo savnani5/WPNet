@@ -1,6 +1,7 @@
 -- Have a baseline pytorch model for depth >> Done  (Improvement to be done by Arunava and Hirunima)
 
 -- Boilerplate Code >> WIP
+	a) Image load function >> Done
 
 -- Write code for WPNet >> WIP
 
