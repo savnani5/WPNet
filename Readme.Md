@@ -1,4 +1,4 @@
--- Have a baseline pytorch model for depth >> Done  (Improvement to be done by Arunava and Hirunima)
+-- Have a baseline pytorch model for depth >> Done  
 
 -- Boilerplate Code >> WIP
 	
