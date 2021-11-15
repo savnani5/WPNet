@@ -5,6 +5,7 @@
 		a) Image load function >> Done
 
 -- Write code for WPNet >> WIP
+
 		a) Architecture code  >> Done
 
 -- Train steps
