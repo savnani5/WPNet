@@ -2,7 +2,7 @@
 
 -- Boilerplate Code >> WIP
 	
-	a) Image load function >> Done
+		a) Image load function >> Done
 
 -- Write code for WPNet >> WIP
 
