@@ -6,7 +6,7 @@
 
 -- Write code for WPNet >> WIP
 
-		a) Architecture code  >> Done
+		a) Base Architecture code  >> Done
 
 -- Train steps
 	First try with depth model freezed
