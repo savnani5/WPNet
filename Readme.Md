@@ -9,7 +9,8 @@
 		a) Base Architecture code  >> Done
 		b) Dataloader >> Done
 		c) Loss function >> Done
-		d) Train script >> WIP
+		d) Train script >> Done (testing is remaining)
+		e) Test script >> WIP
 		e) Add device == cuda to the tensors >> Remaining
 
 -- Train steps
