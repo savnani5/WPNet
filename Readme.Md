@@ -7,6 +7,9 @@
 -- Write code for WPNet >> WIP
 
 		a) Base Architecture code  >> Done
+		b) Dataloader >> Done
+		c) Loss function >> Done
+		d) Train script >> WIP
 
 -- Train steps
 	First try with depth model freezed
