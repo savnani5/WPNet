@@ -28,4 +28,4 @@ UPDATE: train.py file is not tested, might contain bugs !
 -- Also can stack depth + rgb to make 4 channel ?? Checkout 
 
 
-Monodepth caveat - DONOT train from scratch - we do not have the compute capacity and time for that ! 
+## Monodepth caveat - DONOT train from scratch - we do not have the compute capacity and time for that ! 
