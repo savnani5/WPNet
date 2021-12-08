@@ -33,6 +33,8 @@ class Solver:
 
 
     def train(self):
+        
+        print("________________Training Started________________")
         for epoch in range(self.epochs):  # loop over the dataset multiple times
             
             running_loss = 0.0
@@ -44,17 +46,17 @@ class Solver:
                 loss = self.loss_function(image_batch, waypoint_batch, mode='train')
 
                 # print statistics
-                running_loss += loss.item()
-                if i % 2000 == 1999:    # print every 2000 mini-batches
+                running_loss += float(loss.item())
+                if i % 20 == 19:    # print every 20 mini-batches
                     print('[%d, %5d] loss: %.3f' %
-                        (epoch + 1, i + 1, running_loss / 2000))
+                        (epoch + 1, i + 1, running_loss / 20))
                     running_loss = 0.0
         
-        # Saving intermediate models after 20 epochs
-        if epoch>10 and epoch%2 == 0:
+        # Saving intermediate models after each epoch
+        if epoch > 5 and epoch % 2 == 0:
             torch.save(self.model.state_dict(),  f'/final_models/wpnet_{epoch}.pt')
         
-        print('Finished Training')
+        print('_____________________Finished Training___________________')
         return self.model
 
     # def test(self, dataloader):

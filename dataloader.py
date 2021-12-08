@@ -29,11 +29,16 @@ class SastaDataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-
+        
         img_path = os.path.join(self.img_dir, self.ground_truth_values[idx][-1])
         # Not using io.imread coz image is by default in RGBA space - so don't know the function in skimage to convert it in RGB
         # image = io.imread(img_path)
-        image = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_RGBA2RGB)
+        try:
+            image = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_RGBA2RGB)
+        except:
+            img_path = os.path.join(self.img_dir, self.ground_truth_values[idx-1][-1])
+            image = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_RGBA2RGB)
+
         image = np.clip(np.asarray(image, dtype=float)/255, 0, 1)
         waypoint = np.array(self.ground_truth_values[idx][1:8], dtype='float64')
         waypoint = waypoint.astype('float')

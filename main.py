@@ -7,7 +7,7 @@ from model import WPNet, PTModel
 from dataloader import SastaDataset, Rescale, ToTensor, Normalize
 from train import Solver
 
-
+# NOTE :normalize x,y,z values - or use different network
 
 def main():
 
@@ -15,9 +15,9 @@ def main():
     save_model_path = 'final_models/'
     txt_file = "../Dataset/manual_1/manual_1/airsim_rec.txt"
     img_dir = "../Dataset/manual_1/manual_1/images"
-    batch_size = 4
-    epochs = 2
-    desired_image_input = (3, 432, 768)
+    batch_size = 16
+    epochs = 20
+    desired_image_input = (3, 216, 384)
     transform=transforms.Compose([Rescale((desired_image_input[1], desired_image_input[2])), ToTensor(), transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5])])
     
     # Generating the dataloader
@@ -36,6 +36,7 @@ def main():
     wpnet = WPNet(tuple(tensor.shape), model).to(device)
 
     # Model training
+    torch.cuda.empty_cache()
     solver = Solver(wpnet, trainloader, epochs, device, lr=0.001)
     trained_model = solver.train()
     

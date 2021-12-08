@@ -81,9 +81,9 @@ class WPNet(nn.Module):
         for param in self.monodepth_model.parameters():
             param.requires_grad = False
         
-        self.input_shape = input_shape             #input batch shape
+        self.input_shape = input_shape             # input batch shape
         self.conv_net = torch.nn.Sequential(
-                        nn.Conv2d(1, 16, 3),       #tweak its input
+                        nn.Conv2d(1, 16, 3),       # tweak its input
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2),
                         nn.Conv2d(16, 32, 3),
@@ -102,42 +102,40 @@ class WPNet(nn.Module):
             fc_size = s[1] * s[2] * s[3]
 
         self.fc_net = torch.nn.Sequential(
-                        nn.Linear(fc_size, 500),
+                        nn.Linear(fc_size, 300),
                         nn.Dropout(p=0.2),
-                        nn.Linear(500, 100),
-                        nn.Linear(100, 20),
-                        nn.Linear(20, 7))
+                        nn.Linear(300, 50),
+                        nn.Dropout(p=0.2),
+                        nn.Linear(50, 20))
 
-        # self.fc3 = nn.Linear(20, 3)
-        # self.fc4 = nn.Linear(20, 4)
-        self.opt = optim.Adam(self.parameters(), lr=lr)
+        self.fc3 = nn.Linear(20, 3)
+        self.fc4 = nn.Linear(20, 4)
 
-    # Seperation of carts and quats maybe due to different scaling - explore later - also remove last layer from fc_net
-    # def cartesian_forward(self, input_batch):
-    #     """Downsampling block to predict x,y,z waypoints"""
-    #     x = self.monodepth_model(input_batch)
-    #     x = self.conv_net(x)
-    #     x = torch.flatten(x, 1)
-    #     x = self.fc_net(x)
-    #     output = self.fc3(x)
-    #     return output
+    # Seperation of carts and quats maybe due to different scaling
+    def cartesian_forward(self, input_batch):
+        """Downsampling block to predict x,y,z waypoints"""
+        x = self.monodepth_model(input_batch)
+        x = self.conv_net(x)
+        x = torch.flatten(x, 1)
+        x = self.fc_net(x)
+        output = self.fc3(x)
+        return output
 
-    # def quaternion_forward(self, input_batch):
-    #     """Downsampling block to predict rotational state in qw, qx, qy, qz quaternions"""
-    #     x = self.monodepth_model(input_batch)
-    #     x = self.conv_net(x)
-    #     x = torch.flatten(x, 1)
-    #     x = self.fc_net(x)
-    #     output = self.fc4(x)
-    #     return output
+    def quaternion_forward(self, input_batch):
+        """Downsampling block to predict rotational state in qw, qx, qy, qz quaternions"""
+        x = self.monodepth_model(input_batch)
+        x = self.conv_net(x)
+        x = torch.flatten(x, 1)
+        x = self.fc_net(x)
+        output = self.fc4(x)
+        return output
 
 
     def forward(self, input_batch):
         """Returns a vector of waypoints and quarternions - not sure if I wanna return that for n frames or not ??"""
-        x = self.monodepth_model(input_batch)
-        x = self.conv_net(x)
-        x = torch.flatten(x, 1)
-        output = self.fc_net(x)
+        trans = self.cartesian_forward(input_batch)
+        rot = self.quaternion_forward(input_batch)
+        output = torch.cat([trans, rot], dim=1)
         return output
 
 # _____________________________________________________________________________________________________________________
