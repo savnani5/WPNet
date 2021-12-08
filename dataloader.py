@@ -1,4 +1,3 @@
-from __future__ import print_function, division
 import os
 import cv2
 import torch
@@ -6,6 +5,7 @@ import pandas as pd
 from skimage import io, transform
 import numpy as np
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 
@@ -35,13 +35,12 @@ class SastaDataset(Dataset):
         # image = io.imread(img_path)
         image = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_RGBA2RGB)
         image = np.clip(np.asarray(image, dtype=float)/255, 0, 1)
-        waypoint = np.array(self.ground_truth_values[idx][1:8])
+        waypoint = np.array(self.ground_truth_values[idx][1:8], dtype='float64')
         waypoint = waypoint.astype('float')
-        sample = {'image': image, 'waypoint': waypoint}
-
         if self.transform:
-            sample = self.transform(sample)
+            image = self.transform(image)
 
+        sample = {'image': image, 'waypoint': torch.tensor(waypoint, dtype=torch.float64)}
         return sample  
       
 class Rescale(object):
@@ -51,8 +50,8 @@ class Rescale(object):
         assert isinstance(output_size, (int, tuple))
         self.output_size = output_size
 
-    def __call__(self, sample):
-        image, waypoint = sample['image'], sample['waypoint']
+    def __call__(self, image):
+       
         h, w = image.shape[:2]
 
         if isinstance(self.output_size, int):
@@ -64,21 +63,31 @@ class Rescale(object):
             new_h, new_w = self.output_size
 
         new_h, new_w = int(new_h), int(new_w)
-        img = transform.resize(image, (new_h, new_w))
-        return {'image': img, 'waypoint': waypoint}
+        image = transform.resize(image, (new_h, new_w))
+        return image
 
 
 class ToTensor(object):
     """Convert ndarrays in sample to Tensors."""
 
-    def __call__(self, sample):
-        image, waypoint = sample['image'], sample['waypoint']
-
+    def __call__(self, image):
         # swap color axis because
         # numpy image: H x W x C
         # torch image: C x H x W
         image = image.transpose((2, 0, 1))
-        return {'image': torch.from_numpy(image), 'waypoint': torch.from_numpy(waypoint)}
+        image = torch.from_numpy(image)
+        return image
+
+class Normalize(object):
+    """Normalizes the custom image"""
+    
+    def __init__(self, mean, std):
+        self.mean = mean
+        self.std = std
+    
+    def __call__(self, image_tensor):
+        # image tensor shape: (C x H x W)
+        return F.normalize(image_tensor, self.mean, self.std)
 
 
 if __name__ == "__main__":
@@ -154,3 +163,5 @@ if __name__ == "__main__":
             plt.ioff()
             plt.show()
             break
+
+
