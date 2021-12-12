@@ -2,7 +2,7 @@ UPDATE: train.py file is not tested, might contain bugs !
 
 -- Have a baseline pytorch model for depth >> Done  
 
--- System Design and Boilerplate Code >> WIP
+-- System Design and Boilerplate Code >> Done
 	
 		a) Image load function >> Done
 
