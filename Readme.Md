@@ -11,9 +11,9 @@ UPDATE: train.py file is not tested, might contain bugs !
 		a) Base Architecture code  >> Done
 		b) Dataloader >> Done
 		c) Loss function >> Done
-		d) Train script >> Done (testing is remaining)
+		d) Train script >> Done 
 		e) Test script >> WIP
-		e) Add device == cuda to the tensors >> Remaining
+		e) Add device ==  Done
 
 -- Train steps
 	First try with depth model freezed
