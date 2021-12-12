@@ -34,29 +34,31 @@ class Solver:
 
     def train(self):
         
-        print("________________Training Started________________")
-        for epoch in range(self.epochs):  # loop over the dataset multiple times
+        print("__________________Training Started__________________")
+        with open(f"loss_files/loss_v1_manual_0.txt", "w") as f:
+            for epoch in range(self.epochs):  # loop over the dataset multiple times
+                
+                running_loss = 0.0
+                for i, sample_batch in enumerate(tqdm(self.trainloader)):
+                    image_batch = sample_batch['image'].to(self.device).float()
+                    waypoint_batch = sample_batch['waypoint'].to(self.device).float()
+
+                    # Calculating loss
+                    loss = self.loss_function(image_batch, waypoint_batch, mode='train')
+
+                    # print statistics
+                    running_loss += float(loss.item())
+                    if i % 20 == 19:    # print every 20 mini-batches
+                        print('[%d, %5d] loss: %.3f' %
+                            (epoch + 1, i + 1, running_loss / 20))
+                        f.write(f"{epoch+1}\t{i+1}\t{running_loss / 20}\n")
+                        running_loss = 0.0
             
-            running_loss = 0.0
-            for i, sample_batch in enumerate(tqdm(self.trainloader)):
-                image_batch = sample_batch['image'].to(self.device).float()
-                waypoint_batch = sample_batch['waypoint'].to(self.device).float()
-
-                # Calculating loss
-                loss = self.loss_function(image_batch, waypoint_batch, mode='train')
-
-                # print statistics
-                running_loss += float(loss.item())
-                if i % 20 == 19:    # print every 20 mini-batches
-                    print('[%d, %5d] loss: %.3f' %
-                        (epoch + 1, i + 1, running_loss / 20))
-                    running_loss = 0.0
-        
-        # Saving intermediate models after each epoch
-        if epoch > 5 and epoch % 2 == 0:
-            torch.save(self.model.state_dict(),  f'/final_models/wpnet_{epoch}.pt')
-        
-        print('_____________________Finished Training___________________')
+            # Saving intermediate models after each epoch
+            if epoch > 5 and epoch % 2 == 0:
+                torch.save(self.model.state_dict(),  f'/final_models/wpnet_{epoch}.pt')
+            
+        print('___________________Finished Training___________________')
         return self.model
 
     # def test(self, dataloader):

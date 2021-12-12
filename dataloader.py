@@ -97,7 +97,7 @@ class Normalize(object):
 
 if __name__ == "__main__":
 
-    dataset = SastaDataset(txt_file="../Dataset/manual_1/manual_1/airsim_rec.txt", img_dir="../Dataset/manual_1/manual_1/images", transform=transforms.Compose([Rescale((432, 768)),ToTensor()]))
+    dataset = SastaDataset(txt_file="../Dataset/manual_0/manual_0/airsim_rec.txt", img_dir="../Dataset/manual_0/manual_0/images", transform=transforms.Compose([Rescale((432, 768)),ToTensor()]))
     
     # Test Cases
     
