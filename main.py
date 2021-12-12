@@ -12,11 +12,12 @@ from train import Solver
 def main():
 
     # Variable initialization
+    data_folder = 'manual_combo_0124'
     save_model_path = 'final_models/'
-    txt_file = "../Dataset/manual_1/manual_1/airsim_rec.txt"
-    img_dir = "../Dataset/manual_1/manual_1/images"
+    txt_file = f"../Dataset/{data_folder}/{data_folder}/airsim_rec.txt"
+    img_dir = f"../Dataset/{data_folder}/{data_folder}/images"
     batch_size = 16
-    epochs = 20
+    epochs = 25
     desired_image_input = (3, 216, 384)
     transform=transforms.Compose([Rescale((desired_image_input[1], desired_image_input[2])), ToTensor(), transforms.Normalize(mean=[0.5,0.5,0.5], std=[0.5,0.5,0.5])])
     
@@ -34,11 +35,12 @@ def main():
     model.load_state_dict(torch.load("models/nyu.pt"))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     wpnet = WPNet(tuple(tensor.shape), model).to(device)
+    # wpnet.load_state_dict(torch.load("final_models/wpnet.pt"))
 
     # Model training
     torch.cuda.empty_cache()
     solver = Solver(wpnet, trainloader, epochs, device, lr=0.001)
-    trained_model = solver.train()
+    trained_model = solver.train(data_folder)
     
     # Not saving the full model - only the state dictionary - might modify to add the current state of model - like epochs trained, batch size etc.
     torch.save(trained_model.state_dict(), save_model_path + 'wpnet.pt')

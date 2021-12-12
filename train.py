@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 from torch.utils.data.dataloader import DataLoader
@@ -12,7 +13,7 @@ class Solver:
     def __init__(self, model, trainloader, epochs, device, lr=0.001 , weight_decay=1e-5):
         self.criterion = nn.MSELoss()
         self.model = model
-        self.optimizer = optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
+        self.optimizer = optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay) 
         self.epochs = epochs
         self.trainloader = trainloader 
         self.device = device
@@ -22,7 +23,7 @@ class Solver:
         # zero the parameter gradients
         self.optimizer.zero_grad()
 
-        #forward + backward + optimize
+        # forward + backward + optimize
         outputs = self.model(image_batch)
         loss = self.criterion(outputs, waypoint_batch)
         if mode == 'train':
@@ -30,12 +31,12 @@ class Solver:
             self.optimizer.step()
 
         return loss
+ 
 
-
-    def train(self):
+    def train(self, data_folder):
         
         print("__________________Training Started__________________")
-        with open(f"loss_files/loss_v1_manual_0.txt", "w") as f:
+        with open(f"loss_files/loss_rgbd_{data_folder}.txt", "w") as f:
             for epoch in range(self.epochs):  # loop over the dataset multiple times
                 
                 running_loss = 0.0
@@ -48,15 +49,15 @@ class Solver:
 
                     # print statistics
                     running_loss += float(loss.item())
-                    if i % 20 == 19:    # print every 20 mini-batches
+                    if i % 100 == 99:    # print loss every 100 mini-batches
                         print('[%d, %5d] loss: %.3f' %
-                            (epoch + 1, i + 1, running_loss / 20))
-                        f.write(f"{epoch+1}\t{i+1}\t{running_loss / 20}\n")
+                            (epoch + 1, i + 1, running_loss / 100))
+                        f.write(f"{epoch+1}\t{i+1}\t{running_loss / 100}\n")
                         running_loss = 0.0
             
-            # Saving intermediate models after each epoch
-            if epoch > 5 and epoch % 2 == 0:
-                torch.save(self.model.state_dict(),  f'/final_models/wpnet_{epoch}.pt')
+                # Saving intermediate models after every 2 epochs and if epoch are > 2
+                if epoch > 2 and epoch % 2 == 0:
+                    torch.save(self.model.state_dict(),  os.getcwd() + f'/final_models/wpnet_{epoch}.pt')
             
         print('___________________Finished Training___________________')
         return self.model

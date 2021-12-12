@@ -83,13 +83,16 @@ class WPNet(nn.Module):
         
         self.input_shape = input_shape             # input batch shape
         self.conv_net = torch.nn.Sequential(
-                        nn.Conv2d(1, 16, 3),       # tweak its input
+                        nn.Conv2d(4, 16, 3),       # tweak its input
+                        nn.BatchNorm2d(16),
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2),
                         nn.Conv2d(16, 32, 3),
+                        nn.BatchNorm2d(32),
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2),
                         nn.Conv2d(32, 64, 3),
+                        nn.BatchNorm2d(64),
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2))
         
@@ -97,16 +100,20 @@ class WPNet(nn.Module):
         with torch.no_grad():
             dummy = torch.zeros((input_shape))
             x = self.monodepth_model(dummy)
+            dummy = F.interpolate(dummy, scale_factor=(0.5,0.5), mode='nearest')
+            x = torch.cat([dummy, x], 1)
             x = self.conv_net(x)
             s = x.shape
             fc_size = s[1] * s[2] * s[3]
 
         self.fc_net = torch.nn.Sequential(
-                        nn.Linear(fc_size, 300),
+                        nn.Linear(fc_size, 500),
+                        nn.BatchNorm1d(500),
                         nn.Dropout(p=0.2),
-                        nn.Linear(300, 50),
-                        nn.Dropout(p=0.2),
-                        nn.Linear(50, 20))
+                        nn.Linear(500, 100),
+                        nn.BatchNorm1d(100),
+                        nn.Dropout(p=0.3),
+                        nn.Linear(100, 20))
 
         self.fc3 = nn.Linear(20, 3)
         self.fc4 = nn.Linear(20, 4)
@@ -115,6 +122,8 @@ class WPNet(nn.Module):
     def cartesian_forward(self, input_batch):
         """Downsampling block to predict x,y,z waypoints"""
         x = self.monodepth_model(input_batch)
+        input_batch = F.interpolate(input_batch, scale_factor=(0.5,0.5), mode='nearest')
+        x =  torch.cat([input_batch, x], 1)
         x = self.conv_net(x)
         x = torch.flatten(x, 1)
         x = self.fc_net(x)
@@ -124,6 +133,8 @@ class WPNet(nn.Module):
     def quaternion_forward(self, input_batch):
         """Downsampling block to predict rotational state in qw, qx, qy, qz quaternions"""
         x = self.monodepth_model(input_batch)
+        input_batch = F.interpolate(input_batch, scale_factor=(0.5,0.5), mode='nearest')
+        x =  torch.cat([input_batch, x], 1)
         x = self.conv_net(x)
         x = torch.flatten(x, 1)
         x = self.fc_net(x)
@@ -143,7 +154,7 @@ class WPNet(nn.Module):
 
 if __name__ == "__main__":
 
-    tensor = torch.zeros((1, 3, 432, 768))
+    tensor = torch.zeros((4, 3, 432, 768))
     model = PTModel().float()
     model.load_state_dict(torch.load("models/nyu.pt"))
     wpnet = WPNet(tuple(tensor.shape), model)
