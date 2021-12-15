@@ -2,7 +2,7 @@ UPDATE: train.py file is not tested, might contain bugs !
 
 -- Have a baseline pytorch model for depth >> Done  
 
--- System Design and Boilerplate Code >> WIP
+-- System Design and Boilerplate Code >> Done
 	
 		a) Image load function >> Done
 
@@ -13,19 +13,20 @@ UPDATE: train.py file is not tested, might contain bugs !
 		c) Loss function >> Done
 		d) Train script >> Done (testing is remaining)
 		e) Test script >> WIP
-		e) Add device == cuda to the tensors >> Remaining
+		e) Add device == cuda >> Done
 
 -- Train steps
 	First try with depth model freezed
-	Then try with few layers unfreezed 
+	Then try with few layers unfreezed  - maybe not - check if time permits
+
+-- Also can stack depth + rgb to make 4 channel ?? - Update : Working
 
 -- Try Image stacking -- multiple frames
+-- Frame stacking wrapper - how to stack the frames ?
 
 -- Depth + Semantic ??
 
--- Frame stacking wrapper - how to stack the frames ?
-
--- Also can stack depth + rgb to make 4 channel ?? Checkout 
 
 
-## Monodepth caveat - DONOT train from scratch - we do not have the compute capacity and time for that ! 
+
+
