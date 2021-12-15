@@ -8,6 +8,7 @@ from dataloader import SastaDataset, Rescale, ToTensor, Normalize
 from train import Solver
 
 # NOTE :normalize x,y,z values - or use different network
+# Maybe we are trying to over optimize the mse loss - maybe this works fine and maybe we should compare the obstacle free distance moved ??
 
 def main():
 

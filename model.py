@@ -84,15 +84,15 @@ class WPNet(nn.Module):
         self.input_shape = input_shape             # input batch shape
         self.conv_net = torch.nn.Sequential(
                         nn.Conv2d(4, 16, 3),       # tweak its input
-                        nn.BatchNorm2d(16),
+                        # nn.BatchNorm2d(16),
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2),
                         nn.Conv2d(16, 32, 3),
-                        nn.BatchNorm2d(32),
+                        # nn.BatchNorm2d(32),
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2),
                         nn.Conv2d(32, 64, 3),
-                        nn.BatchNorm2d(64),
+                        # nn.BatchNorm2d(64),
                         nn.ReLU(),
                         nn.MaxPool2d(2, 2))
         
@@ -108,11 +108,11 @@ class WPNet(nn.Module):
 
         self.fc_net = torch.nn.Sequential(
                         nn.Linear(fc_size, 500),
-                        nn.BatchNorm1d(500),
+                        # nn.BatchNorm1d(500),
                         nn.Dropout(p=0.2),
                         nn.Linear(500, 100),
-                        nn.BatchNorm1d(100),
-                        nn.Dropout(p=0.3),
+                        # nn.BatchNorm1d(100),
+                        # nn.Dropout(p=0.2),
                         nn.Linear(100, 20))
 
         self.fc3 = nn.Linear(20, 3)

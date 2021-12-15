@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 class Solver:
-    def __init__(self, model, trainloader, epochs, device, lr=0.001 , weight_decay=1e-5):
+    def __init__(self, model, trainloader, epochs, device, lr=0.001 , weight_decay=1e-6):
         self.criterion = nn.MSELoss()
         self.model = model
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay) 
@@ -36,7 +36,7 @@ class Solver:
     def train(self, data_folder):
         
         print("__________________Training Started__________________")
-        with open(f"loss_files/loss_rgbd_{data_folder}.txt", "w") as f:
+        with open(f"loss_files/loss_rgbd_{data_folder}-second_run.txt", "w") as f:
             for epoch in range(self.epochs):  # loop over the dataset multiple times
                 
                 running_loss = 0.0
@@ -58,7 +58,9 @@ class Solver:
                 # Saving intermediate models after every 2 epochs and if epoch are > 2
                 if epoch > 2 and epoch % 2 == 0:
                     torch.save(self.model.state_dict(),  os.getcwd() + f'/final_models/wpnet_{epoch}.pt')
-            
+
+                # Add eval loop
+                
         print('___________________Finished Training___________________')
         return self.model
 
