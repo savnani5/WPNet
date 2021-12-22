@@ -6,9 +6,10 @@ import torch
 import torch.nn as nn
 import torch.nn.utils as utils
 import torchvision.utils as vutils    
-from tensorboardX import SummaryWriter
+#from tensorboardX import SummaryWriter
+from torchsummary import summary
 
-from model import Model
+from pytorch_model_skip import PTModel as Model
 from loss import ssim
 from data import getTrainingTestingData
 from utils import AverageMeter, DepthNorm, colorize
@@ -24,6 +25,8 @@ def main():
     # Create model
     model = Model().cuda()
     print('Model created.')
+    print(model)
+    # summary(model, (3, 256, 256))
 
     # Training parameters
     optimizer = torch.optim.Adam( model.parameters(), args.lr )
@@ -31,10 +34,12 @@ def main():
     prefix = 'densenet_' + str(batch_size)
 
     # Load data
+    print("Loading data, hold up ", batch_size)
+
     train_loader, test_loader = getTrainingTestingData(batch_size=batch_size)
 
     # Logging
-    writer = SummaryWriter(comment='{}-lr{}-e{}-bs{}'.format(prefix, args.lr, args.epochs, args.bs), flush_secs=30)
+   # writer = SummaryWriter(comment='{}-lr{}-e{}-bs{}'.format(prefix, args.lr, args.epochs, args.bs), flush_secs=30)
 
     # Loss
     l1_criterion = nn.L1Loss()
@@ -81,23 +86,23 @@ def main():
         
             # Log progress
             niter = epoch*N+i
-            if i % 5 == 0:
-                # Print to console
-                print('Epoch: [{0}][{1}/{2}]\t'
-                'Time {batch_time.val:.3f} ({batch_time.sum:.3f})\t'
-                'ETA {eta}\t'
-                'Loss {loss.val:.4f} ({loss.avg:.4f})'
-                .format(epoch, i, N, batch_time=batch_time, loss=losses, eta=eta))
+           
+            # Print to console
+            print('Epoch: [{0}][{1}/{2}]\t'
+            'Time {batch_time.val:.3f} ({batch_time.sum:.3f})\t'
+            'ETA {eta}\t'
+            'Loss {loss.val:.4f} ({loss.avg:.4f})'
+            .format(epoch, i, N, batch_time=batch_time, loss=losses, eta=eta))
 
                 # Log to tensorboard
-                writer.add_scalar('Train/Loss', losses.val, niter)
+                #writer.add_scalar('Train/Loss', losses.val, niter)
 
-            if i % 300 == 0:
-                LogProgress(model, writer, test_loader, niter)
+            #if i % 300 == 0:
+                #LogProgress(model, writer, test_loader, niter)
 
         # Record epoch's intermediate results
-        LogProgress(model, writer, test_loader, niter)
-        writer.add_scalar('Train/Loss.avg', losses.avg, epoch)
+        #LogProgress(model, writer, test_loader, niter)
+        #writer.add_scalar('Train/Loss.avg', losses.avg, epoch)
 
 def LogProgress(model, writer, test_loader, epoch):
     model.eval()

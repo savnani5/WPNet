@@ -6,12 +6,15 @@ import torch
 import torch.nn as nn
 import torch.nn.utils as utils
 import torchvision.utils as vutils    
-from tensorboardX import SummaryWriter
+#from tensorboardX import SummaryWriter
+from torchsummary import summary
 
-from model import Model
+from pytorch_model_skip_kanade import PTModel as Model
 from loss import ssim
 from data import getTrainingTestingData
 from utils import AverageMeter, DepthNorm, colorize
+from evaluate import eval
+#from load_weight_from_keras_pass_to_model import model_pass
 
 def main():
     # Arguments
@@ -21,9 +24,43 @@ def main():
     parser.add_argument('--bs', default=4, type=int, help='batch size')
     args = parser.parse_args()
 
+  
+    pretrained_dict=torch.load("original_wts.pth")
     # Create model
     model = Model().cuda()
     print('Model created.')
+    # print(model)
+    # summary(model, (3, 256, 256))
+
+    #load old weights
+    
+    # state_dict_filt={k[key_:]: v for k,v in checkpoint_file['model'].items()}
+
+    # for k,v in checkpoint_file['model'].items():
+    #   if
+    model_dict=model.state_dict()
+    # model.load_state_dict(model_dict)
+    # 1. filter out unnecessary keys
+    # pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+    # update_dict={k: v for k, v in pretrained_dict.items() if k in model_dict}
+    update_dict={}
+    # print(pretrained_dict.keys())
+    # print(model_dict.keys())
+    for k, v in model_dict.items():
+      if k in pretrained_dict:
+        print('available so uploading that sht',k)
+        model_dict[k]=pretrained_dict[k]
+      # else:
+      #   print('not available so normal one',k)
+      #   model_dict={k:v}
+    # print(model_dict.keys())
+    # update_dict={k: pretrained_dict[k] if k in pretrained_dict else k:v for k, v in model_dict.items() }
+
+    # pretrained_dict = {k: v for k, v in pretrained_dict.items() if k in model_dict}
+    # 2. overwrite entries in the existing state dict
+    model_dict.update(model_dict) 
+    # # 3. load the new state dict
+    model.load_state_dict(model_dict)
 
     # Training parameters
     optimizer = torch.optim.Adam( model.parameters(), args.lr )
@@ -34,11 +71,13 @@ def main():
     train_loader, test_loader = getTrainingTestingData(batch_size=batch_size)
 
     # Logging
-    writer = SummaryWriter(comment='{}-lr{}-e{}-bs{}'.format(prefix, args.lr, args.epochs, args.bs), flush_secs=30)
+    #writer = SummaryWriter(comment='{}-lr{}-e{}-bs{}'.format(prefix, args.lr, args.epochs, args.bs), flush_secs=30)
 
     # Loss
     l1_criterion = nn.L1Loss()
-
+    #record the loss
+    loss_list=[100000]
+    
     # Start training...
     for epoch in range(args.epochs):
         batch_time = AverageMeter()
@@ -81,23 +120,36 @@ def main():
         
             # Log progress
             niter = epoch*N+i
-            if i % 5 == 0:
-                # Print to console
+            if i%500 == 0 :
+                    # Print to console
                 print('Epoch: [{0}][{1}/{2}]\t'
                 'Time {batch_time.val:.3f} ({batch_time.sum:.3f})\t'
                 'ETA {eta}\t'
                 'Loss {loss.val:.4f} ({loss.avg:.4f})'
                 .format(epoch, i, N, batch_time=batch_time, loss=losses, eta=eta))
-
+                # torch.save(model.state_dict(), './model_' + str(epoch) + '.pth')
+                # print('model saved to: ', './model_' + str(epoch) + '.pth')
                 # Log to tensorboard
-                writer.add_scalar('Train/Loss', losses.val, niter)
+                #writer.add_scalar('Train/Loss', losses.val, niter)
 
-            if i % 300 == 0:
-                LogProgress(model, writer, test_loader, niter)
+            # if i == int(len(train_loader)*0.5):
+            #   torch.save(model.state_dict(), './model_int_' + str(epoch) + '.pth')
+            #   print('half model saved to: ', './model_int_' + str(epoch) + '.pth')
+
+            #     LogProgress(model, writer, test_loader, niter)
+
 
         # Record epoch's intermediate results
-        LogProgress(model, writer, test_loader, niter)
-        writer.add_scalar('Train/Loss.avg', losses.avg, epoch)
+        #LogProgress(model, writer, test_loader, niter)
+        #writer.add_scalar('Train/Loss.avg', losses.avg, epoch)
+        # test_loss=Testing(model, test_loader)
+    
+        torch.save(model.state_dict(), './model_' + str(epoch) + '.pth')
+        print('model saved to: ', './model_' + str(epoch) + '.pth')
+ 
+        # loss_list.append(test_loss)
+        torch.save(model.state_dict(), './model_last.pth')
+
 
 def LogProgress(model, writer, test_loader, epoch):
     model.eval()
@@ -113,6 +165,32 @@ def LogProgress(model, writer, test_loader, epoch):
     del image
     del depth
     del output
+
+def Testing(model, test_loader):
+    # model.eval()
+    loss_tot=0
+    l1_criterion = nn.L1Loss()
+    with torch.no_grad():
+        for i, sample_batched in enumerate(test_loader):
+
+            image = torch.autograd.Variable(sample_batched['image'].cuda())
+            depth = torch.autograd.Variable(sample_batched['depth'].cuda(non_blocking=True))
+    
+            # Normalize depth
+            depth_n = DepthNorm( depth )
+    
+            # Predict
+            output = model(image)
+    
+            # Compute the loss
+            l_depth = l1_criterion(output, depth_n)
+            l_ssim = torch.clamp((1 - ssim(output, depth_n, val_range = 1000.0 / 10.0)) * 0.5, 0, 1)
+    
+            loss = (1.0 * l_ssim) + (0.1 * l_depth)
+            loss_tot=loss_tot+loss
+        loss_tot=loss_tot.item() / len(test_loader)
+        return loss_tot
+
 
 if __name__ == '__main__':
     main()

@@ -2,6 +2,9 @@ import matplotlib
 import matplotlib.cm
 import numpy as np
 from PIL import Image
+import torch
+from pytorch_model_skip import PTModel as Model
+
 
 def DepthNorm(depth, maxDepth=1000.0): 
     return maxDepth / depth
@@ -21,6 +24,16 @@ class AverageMeter(object):
         self.sum += val * n
         self.count += n
         self.avg = self.sum / self.count
+
+def my_predict( model,images, minDepth=10, maxDepth=1000):
+
+    with torch.no_grad():
+    # Compute predictions
+        predictions = model(images)
+    
+    # Put in expected range
+    return predictions#np.clip(DepthNorm(predictions.cpu().numpy(), maxDepth=maxDepth), minDepth, maxDepth) / maxDepth
+
 
 def colorize(value, vmin=10, vmax=1000, cmap='plasma'):
     value = value.cpu().numpy()[0,:,:]
@@ -119,14 +132,25 @@ def load_test_data(test_data_zip_file='nyu_test.zip'):
 import numpy as np
 from PIL import Image
 
-def predict(model, images, minDepth=10, maxDepth=1000, batch_size=8):
+def predict(model, images, minDepth=10, maxDepth=1000, batch_size=2):
     # Support multiple RGBs, one RGB image, even grayscale 
     if len(images.shape) < 3: images = np.stack((images,images,images), axis=2)
     if len(images.shape) < 4: images = images.reshape((1, images.shape[0], images.shape[1], images.shape[2]))
     # Compute predictions
-    predictions = model.predict(images, batch_size=batch_size)
+    # inputs = load_images( images).astype('float32')
+
+    # pytorch_input = torch.from_numpy(images[0,:,:,:]).permute(2,0,1).unsqueeze(0).to("cuda")
+    pytorch_input = torch.from_numpy(images).permute(0,3,1,2).to("cuda")
+    
+    # print(type(pytorch_input))
+    # print('\nLoaded ({0}) images of size {1}.'.format(inputs.shape[0], inputs.shape[1:]))
+
+  # Compute results
+    predictions = my_predict(model,pytorch_input).permute(0,2,3,1)
+    
+    # predictions = model.predict(images, batch_size=batch_size)
     # Put in expected range
-    return np.clip(DepthNorm(predictions, maxDepth=maxDepth), minDepth, maxDepth) / maxDepth
+    return np.clip(DepthNorm(np.asarray(predictions.cpu()), maxDepth=maxDepth), minDepth, maxDepth) / maxDepth
 
 def scale_up(scale, images):
     from skimage.transform import resize
@@ -172,11 +196,16 @@ def compute_errors(gt, pred):
     log_10 = (np.abs(np.log10(gt)-np.log10(pred))).mean()
     return a1, a2, a3, abs_rel, rmse, log_10
 
-def evaluate(y_test, crop, batch_size=6, verbose=False):
+def evaluate(model, rgb, depth, crop, batch_size=6, verbose=False):
+    N = len(rgb)
 
+    bs = batch_size
 
     predictions = []
     testSetDepths = []
+    # model = Model().cuda()
+    # model_dict=torch.load("model_2.pth")
+    # model.load_state_dict(model_dict)
     
     for i in range(N//bs):    
         x = rgb[(i)*bs:(i+1)*bs,:,:,:]
@@ -198,7 +227,6 @@ def evaluate(y_test, crop, batch_size=6, verbose=False):
             predictions.append(   (0.5 * pred_y[j]) + (0.5 * np.fliplr(pred_y_flip[j]))   )
             testSetDepths.append(   true_y[j]   )
 
-
     predictions = np.stack(predictions, axis=0)
     testSetDepths = np.stack(testSetDepths, axis=0)
 
@@ -209,4 +237,3 @@ def evaluate(y_test, crop, batch_size=6, verbose=False):
         print("{:10.4f}, {:10.4f}, {:10.4f}, {:10.4f}, {:10.4f}, {:10.4f}".format(e[0],e[1],e[2],e[3],e[4],e[5]))
 
     return e
-
