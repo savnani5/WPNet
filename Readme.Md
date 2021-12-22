@@ -1,10 +1,10 @@
 -- Have a baseline pytorch model for depth >> Done  
 
--- System Design and Boilerplate Code >> WIP
+-- System Design and Boilerplate Code >> Done
 	
 		a) Image load function >> Done
 
--- Write code for WPNet >> WIP
+-- Write code for WPNet >> Done
 
 		a) Base Architecture code  >> Done
 		b) Dataloader >> Done
