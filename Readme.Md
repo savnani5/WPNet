@@ -1,29 +1,9 @@
--- Have a baseline pytorch model for depth >> Done  
 
--- System Design and Boilerplate Code >> WIP
-	
-		a) Image load function >> Done
+## Steps to run evaluation
+### Install dependencies
+### Download the model weight file from [here](https://drive.google.com/file/d/1Amw4LjwO8LuTA4L8ZbXuoza0HUIH5iPF/view)
+### Download nyu depth test set from [here](https://s3-eu-west-1.amazonaws.com/densedepth/nyu_test.zip)
+Run the following shell file
 
--- Write code for WPNet >> WIP
+    sh run_eval.sh
 
-		a) Base Architecture code  >> Done
-		b) Dataloader >> Done
-		c) Loss function >> Done
-		d) Train script >> Done 
-		e) Test script >> WIP
-		e) Add device ==  Done
-
--- Train steps
-	First try with depth model freezed
-	Then try with few layers unfreezed 
-
--- Try Image stacking -- multiple frames
-
--- Depth + Semantic ??
-
--- Frame stacking wrapper - how to stack the frames ?
-
--- Also can stack depth + rgb to make 4 channel ?? Checkout 
-
-
-## Monodepth caveat - DONOT train from scratch - we do not have the compute capacity and time for that ! 
