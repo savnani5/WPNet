@@ -18,8 +18,11 @@ applications including navigation and scene understanding, augmented reality. Ba
 ● We use the following loss for Depth Estimation:
 
 ![total_loss](git_images/total_loss.PNG)
+
 ![depth_loss](git_images/depth_loss.PNG)
+
 ![grad_loss](git_images/grad_loss.PNG)
+
 ![ssim_loss](git_images/ssim_loss.PNG)
 
 
