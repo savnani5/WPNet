@@ -12,9 +12,13 @@ applications including navigation and scene understanding, augmented reality. Ba
 ### Depth Network
 
 ● This model works on a encoder decoder based architecture and focuses more on design choices which leads to high quality depth maps. 
+
 ● The encoder of the network is DenseNet-169 pre-trained on ImageNet. 
+
 ● The output of the encoder is then fed into a series of bilinear upsampling layers. These upsampling layers and the corresponding skipconnections forms the decoder. 
+
 ● The decoder is hence composed of basic blocks of convolutional layers applied on the concatenation of the bilinear upsampling of the previous block with the skip connection data of the same spatial size after upsampling.
+
 ● We use the following loss for Depth Estimation:
 
 ![total_loss](git_images/total_loss.PNG)
@@ -29,8 +33,11 @@ applications including navigation and scene understanding, augmented reality. Ba
 ### Waypoint Prediction Network
 
 ● For the input of the network we concatenate RGB images with the depth map at the channel dimension. 
+
 ● We parallize this network into two separate Convolutional feature extractors followed by linear layers to regress the waypoints. 
+
 ● We tried using a single network for WPNet but due to different scaling of the cartesian and quaternion waypoints the gradient was not backpropogating properly to the input, therefore we developed two parallel architectures.
+
 ● We use the following loss for Waypoint Prediction:
 
 ![mse_loss](git_images/mse_loss.PNG)
