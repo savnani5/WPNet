@@ -17,10 +17,10 @@ applications including navigation and scene understanding, augmented reality. Ba
 ● The decoder is hence composed of basic blocks of convolutional layers applied on the concatenation of the bilinear upsampling of the previous block with the skip connection data of the same spatial size after upsampling.
 ● We use the following loss for Depth Estimation:
 
-![total_loss](git_images/total_loss.png)
-![depth_loss](git_images/depth_loss.png)
-![grad_loss](git_images/grad_loss.png)
-![ssim_loss](git_images/ssim_loss.png)
+![total_loss](git_images/total_loss.PNG)
+![depth_loss](git_images/depth_loss.PNG)
+![grad_loss](git_images/grad_loss.PNG)
+![ssim_loss](git_images/ssim_loss.PNG)
 
 
 ### Waypoint Prediction Network
@@ -30,15 +30,15 @@ applications including navigation and scene understanding, augmented reality. Ba
 ● We tried using a single network for WPNet but due to different scaling of the cartesian and quaternion waypoints the gradient was not backpropogating properly to the input, therefore we developed two parallel architectures.
 ● We use the following loss for Waypoint Prediction:
 
-![mse_loss](git_images/mse_loss.png)
+![mse_loss](git_images/mse_loss.PNG)
 
 ● The network Parameters are:
 
-![network params](git_images/params.png)
+![network params](git_images/params.PNG)
 
 ### Architecture
 
-![architecture](git_images/architecture.png)
+![architecture](git_images/architecture.PNG)
 
 ## Results
 
@@ -46,13 +46,13 @@ Both networks were trained independently and the results were combined later.
 
 ● We trained the network for 287,500 iterations with a batch size of 4 on a NVIDIA V100 with 16G of memory on a 50K subset of the NYUv2 dataset provided by the authors of Densedepth. The optimizer used was Adam with a learning rate of 0.0001 with a exponential weight decay factor of 0.1 per epoch.
 
-![rmse_depth](git_images/rmse_depth.png)
+![rmse_depth](git_images/rmse_depth.PNG)
 
-![result](git_images/res.png)
+![result](git_images/res.PNG)
 
 ● We trained this network on Custom Regression dataset of 45k samples for 30 epochs with a mini-batch size of 16 and trained it on NVIDIA RTX 2060 with 6GB of Memory. Batchsize constraint is due to the NVIDIA graphics card. We used Adam optimizer with a learning rate of 0.001 and weight decay of 1e-6.
 
-![mse_rgbd](git_images/mse_rgbd.png)
+![mse_rgbd](git_images/mse_rgbd.PNG)
 
 
 ## Future Work
