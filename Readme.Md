@@ -9,6 +9,11 @@ applications including navigation and scene understanding, augmented reality. Ba
 
 ## Approach
 
+### Architecture
+
+![architecture](git_images/architecture.PNG)
+
+
 ### Depth Network
 
 ● This model works on a encoder decoder based architecture and focuses more on design choices which leads to high quality depth maps. 
@@ -46,13 +51,10 @@ applications including navigation and scene understanding, augmented reality. Ba
 
 ![network params](git_images/params.PNG)
 
-### Architecture
-
-![architecture](git_images/architecture.PNG)
 
 ## Dataset
 
-1) [NYU_Depth_v2 dataset for Depth Estimation]()
+1) [NYU_Depth_v2 dataset for Depth Estimation](https://s3-eu-west-1.amazonaws.com/densedepth/nyu_test.zip)
 2) [Custom Regression Dataset for Waypoint Prediction](https://drive.google.com/drive/folders/16ZIi2aNkl4y1HaZcLaSx453Y9vk-LaTC?usp=sharing) 
 
 ## Results
