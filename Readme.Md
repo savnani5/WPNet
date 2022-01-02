@@ -5,7 +5,7 @@ Exploring and navigating autonomously in uneven and unstructured environments is
 flights have a high risk of collision and have a battery bottleneck due to limited storage onboard. Also due to environmental uncertainites, an intelligent autonomous aerial
 system is essential to navigate these environments. Current literature on autonomous flights focuses on mapping the environment first then navigating them. Our approach doesn’t
 assume that the environment is mapped, we take in real time images and try to navigate the environment. Also having a dense depth map of the real-world can be very useful in
-applications including navigation and scene understanding, augmented reality. Based on our experimental analysis of existing architectures and training strategies we set out with the design goal to develop a simpler architecture that makes training and future modifications easier. Our architecture is a modification of the DenseDepth to compute depth and this feeds into a novel parallized 2-way waypoint prediction network. We rely on transfer learning of the Encoder-Decoder weights for the depth network and train the WPNet from Ground zero. A novel thing about this architecture is that we can train each module seperately and it does not affect the performance of the network. This modular approach is advantageous if in future we want to substitute any network or improve the performance of any submodule. Our approach uses Depth Estimation with Multi-Task Regression-based Learning to individually learn the position of waypoints in X, Y, Z coordinates within the scene in addition to learning the qw, qz, qy, qz quaternions. The flight controller can change position and speed in real time to perform obstacle avoidance. Also it uses the inertialand visual information to predict waypoints so its a very robust approach in GPS-denied environments. 
+applications including navigation and scene understanding, augmented reality. Based on our experimental analysis of existing architectures and training strategies we set out with the design goal to develop a simpler architecture that makes training and future modifications easier. Our architecture is a modification of the DenseDepth to compute depth and this feeds into a novel parallized 2-way waypoint prediction network. We rely on transfer learning of the Encoder-Decoder weights for the depth network and train the WPNet from Ground zero. A novel thing about this architecture is that we can train each module seperately and it does not affect the performance of the network. This modular approach is advantageous if in future we want to substitute any network or improve the performance of any submodule. Our approach uses Depth Estimation with Multi-Task Regression-based Learning to individually learn the position of waypoints in X, Y, Z coordinates within the scene in addition to learning the qw, qz, qy, qz quaternions. The flight controller can change position and speed in real time to perform obstacle avoidance. Also it uses the inertialand visual information to predict waypoints so its a very robust approach in GPS-denied environments. For more information refer [this link](https://github.com/savnani5/Lane_Detection/blob/main/Documentation/ENPM673-%20PROJ2.pdf).
 
 ## Approach
 
@@ -50,19 +50,26 @@ applications including navigation and scene understanding, augmented reality. Ba
 
 ![architecture](git_images/architecture.PNG)
 
+## Dataset
+
+1) [NYU_Depth_v2 dataset for Depth Estimation]()
+2) [Custom Regression Dataset for Waypoint Prediction]() 
+
 ## Results
 
 Both networks were trained independently and the results were combined later.
 
 ● We trained the network for 287,500 iterations with a batch size of 4 on a NVIDIA V100 with 16G of memory on a 50K subset of the NYUv2 dataset provided by the authors of Densedepth. The optimizer used was Adam with a learning rate of 0.0001 with a exponential weight decay factor of 0.1 per epoch.
 
-![rmse_depth](git_images/rmse_depth.PNG)
-
 ![result](git_images/res.PNG)
 
 ● We trained this network on Custom Regression dataset of 45k samples for 30 epochs with a mini-batch size of 16 and trained it on NVIDIA RTX 2060 with 6GB of Memory. Batchsize constraint is due to the NVIDIA graphics card. We used Adam optimizer with a learning rate of 0.001 and weight decay of 1e-6.
 
 ![mse_rgbd](git_images/mse_rgbd.PNG)
+
+● Summary of Losses:
+
+![loss_summ](git_images/loss_summ.PNG)
 
 
 ## Future Work
