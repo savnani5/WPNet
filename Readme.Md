@@ -1,6 +1,5 @@
 # Towards Online Waypoint Generation for a Quadrotor Using Enhanced Monocular Depth Estimation.
 
-[![Build Status](https://travis-ci.org/savnani5/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 Exploring and navigating autonomously in uneven and unstructured environments is an unsolved problem because
 flights have a high risk of collision and have a battery bottleneck due to limited storage onboard. Also due to environmental uncertainites, an intelligent autonomous aerial
