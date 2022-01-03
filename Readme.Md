@@ -54,7 +54,7 @@ applications including navigation and scene understanding, augmented reality. Ba
 ![network params](git_images/params.PNG)
 
 ---
-## Dataset
+## Download the Dataset
 
 1) [NYU_Depth_v2 dataset for Depth Estimation](https://s3-eu-west-1.amazonaws.com/densedepth/nyu_test.zip)
 2) [Custom Regression Dataset for Waypoint Prediction](https://drive.google.com/drive/folders/16ZIi2aNkl4y1HaZcLaSx453Y9vk-LaTC?usp=sharing) 
