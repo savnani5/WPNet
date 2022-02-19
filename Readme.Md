@@ -8,7 +8,7 @@ Current literature on autonomous flights focuses on mapping the environment firs
 
 Our architecture is a modification of the DenseDepth to compute depth and this feeds into a novel parallized 2-way waypoint prediction network. We rely on transfer learning of the Encoder-Decoder weights for the depth network and train the WPNet from Ground zero. A novel thing about this architecture is that we can train each module seperately and it does not affect the performance of the network. This modular approach is advantageous if in future we want to substitute any network or improve the performance of any submodule. 
 
-Our approach uses Depth Estimation with Multi-Task Regression-based Learning to individually learn the position of waypoints in X, Y, Z coordinates within the scene in addition to learning the qw, qz, qy, qz quaternions. The flight controller can change position and speed in real time to perform obstacle avoidance. Also it uses the inertial and visual information to predict waypoints so its a very robust approach in GPS-denied environments. For more information refer [this link](https://github.com/savnani5/WPNet/blob/main/CVPR_2022.pdf).
+Our approach uses Depth Estimation with Multi-Task Regression-based Learning to individually learn the position of waypoints in X, Y, Z coordinates within the scene in addition to learning the qw, qz, qy, qz quaternions. The flight controller can change position and speed in real time to perform obstacle avoidance. Also it uses the inertial and visual information to predict waypoints so its a very robust approach in GPS-denied environments. For more information refer [this link](https://github.com/savnani5/WPNet/blob/main/Depth_WPNet.pptx).
 
 ---
 ## Approach
