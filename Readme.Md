@@ -81,4 +81,8 @@ Both networks were trained independently and the results were combined later.
 ---
 ## Future Work
 
-For more recent future work we would like to code another evaluation metric for the network output like the collision free distance moved additionally controlling the outputs with a traditional controller like LQR and simulating the results in airsim. We can code this based on the depth information and the check if the predicted waypoint is colliding with the nearby obstacle or not. Also we would like to change the Encoder-Decoder part of the Densedepth to a more parameter efficient network like MobileNet without compromising the performance. Furthermore for a longer timeline we are planning to make this network totally endto-end where it will also learn the control policies after the waypoint trajectory prediction, although generating such a custom dataset for this approach might be a big problem.
+For more recent future work we would like to code another evaluation metric for the network output like the collision free distance moved additionally controlling the outputs with a traditional controller like LQR and simulating the results in airsim. We can code this based on the depth information and the check if the predicted waypoint is colliding with the nearby obstacle or not. 
+
+Also we would like to change the Encoder-Decoder part of the Densedepth to a more parameter efficient network like MobileNet without compromising the performance. 
+
+Furthermore for a longer timeline we are planning to make this network totally endto-end where it will also learn the control policies after the waypoint trajectory prediction, although generating such a custom dataset for this approach might be a big problem.
