@@ -1,5 +1,5 @@
 # Towards Online Waypoint Generation for a Quadrotor Using Enhanced Monocular Depth Estimation.
-
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 ## Overview
 
 Exploring and navigating autonomously in uneven and unstructured environments is an unsolved problem because flights have a high risk of collision and have a battery bottleneck due to limited storage onboard. Also due to environmental uncertainites, an intelligent autonomous aerial system is essential to navigate these environments. 
