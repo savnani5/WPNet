@@ -1,4 +1,4 @@
-# Towards Online Waypoint Generation for a Quadrotor Using Enhanced Monocular Depth Estimation.
+# Towards Online Waypoint Generation for a Quadrotor Using Enhanced Monocular Depth Estimation
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 ## Overview
 
