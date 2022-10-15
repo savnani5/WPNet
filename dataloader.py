@@ -119,20 +119,6 @@ if __name__ == "__main__":
     #         # cv2.waitKey(0)
     #         break
 
-    #____________________________Checking Rescale class__________________________________
-    # scale = Rescale((400, 400))
-    # composed = transforms.Compose([scale])
-    # fig = plt.figure()
-    # sample = sd[3]
-    # for i, tsfrm in enumerate([scale, composed]):
-    #     transformed_sample = tsfrm(sample)
-
-    #     ax = plt.subplot(1, 3, i + 1)
-    #     plt.tight_layout()
-    #     ax.set_title(type(tsfrm).__name__)
-    #     plt.imshow(transformed_sample['image'])
-
-    # plt.show()
 
     #___________________________Checking the iteration on dataset_________________________
     # for i in range(len(dataset)):
